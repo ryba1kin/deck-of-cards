@@ -1,0 +1,13 @@
+# Project exclude paths
+.idea/
+.allure/
+.gradle
+**/build/
+!src/**/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+/gradlew
+/gradlew.bat
+
