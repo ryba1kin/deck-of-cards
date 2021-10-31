@@ -1,6 +1,8 @@
 package ru.rubalkin.stash;
 
 
+import org.junit.platform.commons.util.CollectionUtils;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Stash {
@@ -22,5 +24,15 @@ public class Stash {
         ConcurrentHashMap<String, T> chm =
                 (ConcurrentHashMap<String, T>) stash.get();
         return chm.get(key);
+    }
+
+    public static void init() {
+        if(!stash.get().isEmpty()) {
+            stash.get().clear();
+        }
+    }
+
+    public static void clear() {
+        stash.get().clear();
     }
 }

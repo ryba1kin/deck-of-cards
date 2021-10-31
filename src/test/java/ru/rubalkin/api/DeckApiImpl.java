@@ -39,27 +39,26 @@ public class DeckApiImpl implements DeckApi {
     private static final String TEMPLATE_DECK_DRAW_BOTTOM = "/{deck_id}/draw/bottom";
     private static final String COUNT = "count";
     private static final ResponseSpecification responseSpec = new ResponseSpecBuilder()
-            .expectStatusCode(200)
-            .expectBody("success", is(true))
-            .build();
+        .expectStatusCode(200)
+        .expectBody("success", is(true))
+        .build();
+    private static final RestAssuredConfig config = RestAssured.config()
+        .objectMapperConfig(new ObjectMapperConfig()
+            .jackson2ObjectMapperFactory((cls, charset) -> new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)));
     private String baseUrl;
     private String deckId;
     private Integer remaining;
     private List<String> drawedCards;
-    private final RestAssuredConfig config = RestAssured.config()
-            .objectMapperConfig(
-                    new ObjectMapperConfig()
-                            .jackson2ObjectMapperFactory((cls, charset) -> new ObjectMapper()
-                                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)));
 
 
     static {
         RestAssured
-                .filters(
-                        new AllureRestAssured(),
-                        new RequestLoggingFilter(LogDetail.ALL),
-                        new ResponseLoggingFilter(LogDetail.ALL)
-                );
+            .filters(
+                new AllureRestAssured(),
+                new RequestLoggingFilter(LogDetail.ALL),
+                new ResponseLoggingFilter(LogDetail.ALL)
+            );
     }
 
     private DeckApiImpl() {
@@ -71,12 +70,11 @@ public class DeckApiImpl implements DeckApi {
     }
 
     public static final class Builder {
-        private DeckApiImpl deckApi;
+        private final DeckApiImpl deckApi;
 
         private Builder() {
             this.deckApi = new DeckApiImpl();
         }
-
 
         public DeckApiImpl build() {
             return this.deckApi;
@@ -103,73 +101,73 @@ public class DeckApiImpl implements DeckApi {
     public ShuffleResponseDto newDeck(Boolean jokers_enabled) {
         this.drawedCards = new ArrayList<>();
         return setDeckAndReturn(given()
-                .config(config)
-                .baseUri(baseUrl)
-                .basePath(BASE_PATH)
-                .param(JOKERS_ENABLED, jokers_enabled)
-                .get(NEW)
-                .then()
-                .spec(responseSpec)
-                .extract().body()
-                .as(ShuffleResponseDto.class));
+            .config(config)
+            .baseUri(baseUrl)
+            .basePath(BASE_PATH)
+            .param(JOKERS_ENABLED, jokers_enabled)
+            .get(NEW)
+            .then()
+            .spec(responseSpec)
+            .extract().body()
+            .as(ShuffleResponseDto.class));
     }
 
     @Override
     public ShuffleResponseDto newDeck(Set<String> cards) {
         this.drawedCards = new ArrayList<>();
         return setDeckAndReturn(given()
-                .config(config)
-                .baseUri(baseUrl)
-                .basePath(BASE_PATH)
-                .params(cards.isEmpty() ? null : singletonMap(CARDS, join(",", cards)))
-                .get(NEW_SHUFFLE)
-                .then()
-                .spec(responseSpec)
-                .extract().body()
-                .as(ShuffleResponseDto.class));
+            .config(config)
+            .baseUri(baseUrl)
+            .basePath(BASE_PATH)
+            .params(cards.isEmpty() ? null : singletonMap(CARDS, join(",", cards)))
+            .get(NEW_SHUFFLE)
+            .then()
+            .spec(responseSpec)
+            .extract().body()
+            .as(ShuffleResponseDto.class));
     }
 
     @Override
     public ShuffleResponseDto shuffle(int deck_count) {
         this.drawedCards = new ArrayList<>();
         return setDeckAndReturn(given()
-                .config(config)
-                .baseUri(baseUrl)
-                .basePath(BASE_PATH)
-                .param(DECK_COUNT, deck_count)
-                .get(NEW_SHUFFLE)
-                .then()
-                .spec(responseSpec)
-                .extract().body()
-                .as(ShuffleResponseDto.class));
+            .config(config)
+            .baseUri(baseUrl)
+            .basePath(BASE_PATH)
+            .param(DECK_COUNT, deck_count)
+            .get(NEW_SHUFFLE)
+            .then()
+            .spec(responseSpec)
+            .extract().body()
+            .as(ShuffleResponseDto.class));
     }
 
     @Override
     public ShuffleResponseDto reShuffle(Boolean remaining) {
         return setDeckAndReturn(given()
-                .config(config)
-                .baseUri(baseUrl)
-                .basePath(BASE_PATH)
-                .params(isNull(remaining) ? null : singletonMap(REMAINING, remaining))
-                .get(TEMPLATE_DECK_SHUFFLE, this.deckId)
-                .then()
-                .spec(responseSpec)
-                .extract().body()
-                .as(ShuffleResponseDto.class));
+            .config(config)
+            .baseUri(baseUrl)
+            .basePath(BASE_PATH)
+            .params(isNull(remaining) ? null : singletonMap(REMAINING, remaining))
+            .get(TEMPLATE_DECK_SHUFFLE, this.deckId)
+            .then()
+            .spec(responseSpec)
+            .extract().body()
+            .as(ShuffleResponseDto.class));
     }
 
     @Override
     public DrawResponseDto draw(int count) {
         DrawResponseDto dto = given()
-                .config(config)
-                .baseUri(baseUrl)
-                .basePath(BASE_PATH)
-                .param(COUNT, count)
-                .get(TEMPLATE_DECK_DRAW, this.deckId)
-                .then()
-                .spec(responseSpec)
-                .extract().body()
-                .as(DrawResponseDto.class);
+            .config(config)
+            .baseUri(baseUrl)
+            .basePath(BASE_PATH)
+            .param(COUNT, count)
+            .get(TEMPLATE_DECK_DRAW, this.deckId)
+            .then()
+            .spec(responseSpec)
+            .extract().body()
+            .as(DrawResponseDto.class);
         this.drawedCards.addAll(extractCardsFromDrawResponse(dto));
         return setDeckAndReturn(dto);
     }
@@ -177,15 +175,15 @@ public class DeckApiImpl implements DeckApi {
     @Override
     public DrawResponseDto drawFromBottom(int count) {
         DrawResponseDto dto = given()
-                .config(config)
-                .baseUri(baseUrl)
-                .basePath(BASE_PATH)
-                .param(COUNT, count)
-                .get(TEMPLATE_DECK_DRAW_BOTTOM, this.deckId)
-                .then()
-                .spec(responseSpec)
-                .extract().body()
-                .as(DrawResponseDto.class);
+            .config(config)
+            .baseUri(baseUrl)
+            .basePath(BASE_PATH)
+            .param(COUNT, count)
+            .get(TEMPLATE_DECK_DRAW_BOTTOM, this.deckId)
+            .then()
+            .spec(responseSpec)
+            .extract().body()
+            .as(DrawResponseDto.class);
         this.drawedCards.addAll(extractCardsFromDrawResponse(dto));
         return setDeckAndReturn(dto);
     }

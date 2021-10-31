@@ -71,7 +71,11 @@ task cucumber() {
         javaexec {
             main = "io.cucumber.core.cli.Main"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--glue', 'ru.rubalkin', 'src/test/resources']
+            args = ['--threads', '4', '--glue', 'ru.rubalkin', 'src/test/resources']
         }
     }
+}
+
+tasks.test {
+    finalizedBy cucumber
 }
