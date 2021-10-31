@@ -5,4 +5,4 @@ easy way to:
  * run cucumber tests `gradle cucumber`
  * aggregate tests results to allure report `gradle allureReport`
  * run web server with generated allure report `gradle allureServe`
- * run all steps `gradle cucumber allureReport allureServe`
+ * run all steps with complete build ignoring errors\failures `gradle cucumber allureReport allureServe --continue`

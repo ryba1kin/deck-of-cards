@@ -1,5 +1,7 @@
 package ru.rubalkin;
 
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,6 +23,16 @@ public class StepDefinitions {
     DeckApi api = DeckApiImpl.builder()
             .withBaseUrl("http://deckofcardsapi.com")
             .build();
+
+    @Before
+    public void before() {
+        Stash.init();
+    }
+
+    @After
+    public void after() {
+        Stash.clear();
+    }
 
     @Given("New deck")
     public void new_deck() {
