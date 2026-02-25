@@ -3,16 +3,17 @@
  */
 plugins {
     id 'java'
-    id 'io.qameta.allure' version '2.8.0'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 group = 'ru.rubalkin'
 version = '1.0'
 description = 'deck-of-cards'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 
-def allureVersion = '2.13.6'
-def cucumberVersion = "6.10.2"
+java.sourceCompatibility = JavaVersion.VERSION_21
+
+def allureVersion = '2.32.0'
+def cucumberVersion = "7.20.1"
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -23,31 +24,27 @@ repositories {
     maven {
         url = uri('https://repo.maven.apache.org/maven2/')
     }
-    //noinspection JCenterRepository
-    jcenter()
 }
 
 dependencies {
     //allure
-    testImplementation 'io.qameta.allure:allure-gradle:2.5'
-    testImplementation "io.qameta.allure:allure-cucumber6-jvm:$allureVersion"
+    testImplementation "io.qameta.allure:allure-cucumber7-jvm:$allureVersion"
     testImplementation "io.qameta.allure:allure-rest-assured:$allureVersion"
 
     //rest assured
-    testImplementation 'io.rest-assured:rest-assured:4.4.0'
-    testImplementation 'io.rest-assured:json-path:4.4.0'
+    testImplementation 'io.rest-assured:rest-assured:5.5.0'
+    testImplementation 'io.rest-assured:json-path:5.5.0'
 
     //jackson object mapper
-    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
 
     //cucumber
-    testImplementation "io.cucumber:cucumber-java8:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-java:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-junit-platform-engine:$cucumberVersion"
 
     //junit
-    testImplementation 'org.junit.platform:junit-platform-suite:1.8.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
 }
 
 configurations {
@@ -61,19 +58,13 @@ allure {
     version = allureVersion
     autoconfigure = false
     aspectjweaver = true
-    clean = true
-    resultsDir = file(buildDir.absolutePath + '/reports/allure-results')
 }
 
-task cucumber() {
+task cucumber(type: JavaExec) {
     dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--threads', '4', '--glue', 'ru.rubalkin', 'src/test/resources']
-        }
-    }
+    mainClass.set("io.cucumber.core.cli.Main")
+    classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+    args = ['--threads', '4', '--glue', 'ru.rubalkin', 'src/test/resources']
 }
 
 tasks.test {
